@@ -11,6 +11,7 @@ type Store struct {
 
 type (
 	StoreRequest struct {
+		Id        string `json:"id"`
 		StoreName string `json:"storeName" binding:"required"`
 		Address   string `json:"address" binding:"required"`
 		OwnerName string `json:"ownerName" binding:"required"`

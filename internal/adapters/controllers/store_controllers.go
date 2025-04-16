@@ -14,6 +14,8 @@ type (
 	StoreController interface {
 		CreateStore(ctx *gin.Context)
 		FindStoreById(ctx *gin.Context)
+		UpdateStore(ctx *gin.Context)
+		DeletedStore(ctx *gin.Context)
 	}
 
 	storeController struct {
@@ -66,5 +68,38 @@ func (sc *storeController) FindStoreById(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, utils.BuildResponseSuccess("Success", res))
+
+}
+
+func (sc *storeController) UpdateStore(ctx *gin.Context) {
+	var updates entities.StoreRequest
+
+	if err := ctx.ShouldBind(&updates); err != nil {
+		ctx.JSON(http.StatusInternalServerError, utils.BuildResponseFailed(err.Error()))
+		return
+	}
+
+	res, err := sc.storeService.UpdatedStore(updates)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, utils.BuildResponseFailed(err.Error()))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, utils.BuildResponseSuccess("Updated Succes", res))
+
+}
+
+func (sc *storeController) DeletedStore(ctx *gin.Context) {
+	params := ctx.Param("id")
+
+	res, err := sc.storeService.DeletedStore(params)
+
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, utils.BuildResponseFailed(err.Error()))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, utils.BuildResponseSuccess("Success Deleted id : "+params, res))
 
 }

@@ -37,6 +37,7 @@ func (app *App) Routes() {
 
 	baseUrl := fmt.Sprintf("%s/v%d", constants.ApiPrevix, constants.ApiVersion)
 	log.Println("Base url : ", baseUrl)
+
 	storeRepo := repositories.NewStoreRepository(app.Db)
 	storeUseCase := usecases.NewStoreService(storeRepo)
 	storeController := controllers.NewStoreController(storeUseCase)
@@ -45,11 +46,8 @@ func (app *App) Routes() {
 	storeRoutes.POST("/create", storeController.CreateStore)
 	storeRoutes.GET("/find/:id", storeController.FindStoreById)
 	storeRoutes.GET("/find", storeController.FindStoreById)
-	// router.GET("/ping", func(c *gin.Context) {
-	// 	c.JSON(200, gin.H{
-	// 		"Message": "Crot",
-	// 	})
-	// })
+	storeRoutes.PUT("/update", storeController.UpdateStore)
+	storeRoutes.DELETE("/deleted/:id", storeController.DeletedStore)
 
 	app.Router = router
 }
