@@ -48,6 +48,7 @@ func (app *App) Routes() {
 	storeRoutes.GET("/find", storeController.FindStoreById)
 	storeRoutes.PUT("/update", storeController.UpdateStore)
 	storeRoutes.DELETE("/deleted/:id", storeController.DeletedStore)
+	storeRoutes.GET("/searchAndFilterStore", storeController.GetStoreByPaggingAndFilter)
 
 	app.Router = router
 }

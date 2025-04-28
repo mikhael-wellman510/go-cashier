@@ -9,10 +9,11 @@ import (
 
 type (
 	StoreRepository interface {
-		Create(entities.Store) (entities.Store, error)
+		Create(store *entities.Store) error
 		FindById(id string) (entities.Store, error)
-		Update(id string, update entities.Store) (entities.Store, error)
+		Update(store *entities.Store) error
 		Deleted(id string) error
+		FindAllPagging(page int, limit int, storeName string, ownerName string) ([]entities.Store, error)
 	}
 
 	storeRepository struct {
@@ -27,37 +28,22 @@ func NewStoreRepository(db *gorm.DB) StoreRepository {
 	}
 }
 
-func (sr *storeRepository) Create(store entities.Store) (entities.Store, error) {
+func (sr *storeRepository) Create(store *entities.Store) error {
 
-	err := sr.db.Create(&store).Error
-	log.Println("Err repo : ", err)
-
-	return store, err
+	return sr.db.Create(&store).Error
 }
 
 func (sr *storeRepository) FindById(id string) (entities.Store, error) {
 	var store entities.Store
 
 	err := sr.db.First(&store, "id=?", id).Error
-	log.Println("Hasil err repo : ", err)
-	log.Println("hasil store repo : ", store)
+
 	return store, err
 }
 
-func (sr *storeRepository) Update(id string, update entities.Store) (entities.Store, error) {
+func (sr *storeRepository) Update(store *entities.Store) error {
 
-	var store entities.Store
-
-	if err := sr.db.First(&store, "id=?", id).Error; err != nil {
-		return store, err
-	}
-
-	if err := sr.db.Model(&store).Updates(update).Error; err != nil {
-		return store, err
-
-	}
-
-	return store, nil
+	return sr.db.Save(store).Error
 }
 
 func (sr *storeRepository) Deleted(id string) error {
@@ -66,4 +52,26 @@ func (sr *storeRepository) Deleted(id string) error {
 
 	// Kalau pake uuid harus pakai id=? , karena dia mengira itu integer
 	return sr.db.Delete(&store, "id=?", id).Error
+}
+
+func (sr *storeRepository) FindAllPagging(page int, limit int, storeName string, ownerName string) ([]entities.Store, error) {
+
+	var stores []entities.Store
+
+	query := sr.db.Model(&entities.Store{})
+
+	if storeName != "" {
+		query = query.Where("store_name LIKE ?", "%"+storeName+"%")
+	}
+
+	if ownerName != "" {
+		query = query.Where("owner_name LIKE ?", "%"+ownerName+"%")
+	}
+
+	if err := query.Find(&stores).Error; err != nil {
+		return nil, err
+	}
+
+	log.Println("Hasil stores : ->> ", stores)
+	return []entities.Store{}, nil
 }

@@ -16,6 +16,7 @@ type (
 		FindStoreById(ctx *gin.Context)
 		UpdateStore(ctx *gin.Context)
 		DeletedStore(ctx *gin.Context)
+		GetStoreByPaggingAndFilter(ctx *gin.Context)
 	}
 
 	storeController struct {
@@ -101,5 +102,16 @@ func (sc *storeController) DeletedStore(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, utils.BuildResponseSuccess("Success Deleted id : "+params, res))
+
+}
+
+func (sc *storeController) GetStoreByPaggingAndFilter(ctx *gin.Context) {
+	storeName := ctx.DefaultQuery("storeName", "")
+	ownerName := ctx.DefaultQuery("ownerName", "")
+
+	paggination := utils.GetPagination(ctx)
+
+	sc.storeService.FilterAndPagginStore(paggination.Page, paggination.Limit, storeName, ownerName)
+	// Todo getQuery
 
 }

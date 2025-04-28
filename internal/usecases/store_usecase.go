@@ -4,6 +4,7 @@ import (
 	"log"
 	"mikhael-project-go/internal/adapters/repositories"
 	"mikhael-project-go/internal/entities"
+	"mikhael-project-go/internal/utils"
 )
 
 type (
@@ -12,6 +13,7 @@ type (
 		FindStoreById(id string) (entities.StoreResponse, error)
 		UpdatedStore(storeReq entities.StoreRequest) (entities.StoreResponse, error)
 		DeletedStore(id string) (bool, error)
+		FilterAndPagginStore(page int, limit int, storeName string, ownerName string) (utils.PaginationResponse, error)
 	}
 
 	storeService struct {
@@ -33,19 +35,21 @@ func (ss *storeService) CreateStore(storeReq entities.StoreRequest) (entities.St
 		OwnerName: storeReq.OwnerName,
 	}
 
-	res, err := ss.StoreRepository.Create(store)
-	log.Println("Err useCase : ", err)
-	if err != nil {
+	// res, err := ss.StoreRepository.Create(&store)
+	log.Println("store awal : ", store)
+	if err := ss.StoreRepository.Create(&store); err != nil {
+		log.Println("Error nya : ", err)
 		return entities.StoreResponse{}, err
 	}
 
+	log.Println("Log store setelah create : ", store)
 	return entities.StoreResponse{
-		Id:        res.ID,
-		StoreName: res.StoreName,
-		Address:   res.Address,
-		OwnerName: res.OwnerName,
-		CreatedAt: res.CreatedAt,
-		UpdatedAt: res.UpdatedAt,
+		Id:        store.ID,
+		StoreName: store.StoreName,
+		Address:   store.Address,
+		OwnerName: store.OwnerName,
+		CreatedAt: store.CreatedAt,
+		UpdatedAt: store.UpdatedAt,
 	}, nil
 }
 
@@ -68,19 +72,27 @@ func (ss *storeService) FindStoreById(id string) (entities.StoreResponse, error)
 
 func (ss *storeService) UpdatedStore(storeReq entities.StoreRequest) (entities.StoreResponse, error) {
 
-	store := entities.Store{
-		StoreName: storeReq.StoreName,
-		Address:   storeReq.Address,
-		OwnerName: storeReq.OwnerName,
+	// Todo find by id dulu
+
+	res, err := ss.StoreRepository.FindById(storeReq.Id)
+
+	log.Println("Hasil res: ", res)
+	if err != nil {
+		log.Println("Hasil err : ", err)
+		return entities.StoreResponse{}, err
+
 	}
 
-	// Todo -> Hit Repository
-	res, err := ss.StoreRepository.Update(storeReq.Id, store)
+	res.StoreName = storeReq.StoreName
+	res.Address = storeReq.Address
+	res.OwnerName = storeReq.OwnerName
 
-	if err != nil {
+	if err := ss.StoreRepository.Update(&res); err != nil {
+
 		return entities.StoreResponse{}, err
 	}
 
+	log.Println("Hasil updated : ", res)
 	return entities.StoreResponse{
 		Id:        res.ID,
 		StoreName: res.StoreName,
@@ -100,4 +112,11 @@ func (ss *storeService) DeletedStore(id string) (bool, error) {
 
 	return true, ss.StoreRepository.Deleted(id)
 
+}
+
+func (ss *storeService) FilterAndPagginStore(page int, limit int, storeName string, ownerName string) (utils.PaginationResponse, error) {
+
+	ss.StoreRepository.FindAllPagging(page, limit, storeName, ownerName)
+
+	return utils.PaginationResponse{}, nil
 }
