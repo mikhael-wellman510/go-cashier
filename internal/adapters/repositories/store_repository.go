@@ -14,6 +14,7 @@ type (
 		Update(store *entities.Store) error
 		Deleted(id string) error
 		FindAllPagging(page int, limit int, storeName string, ownerName string) ([]entities.Store, error)
+		CountStoresWithFilter(storeName string, ownerName string) (int64, error)
 	}
 
 	storeRepository struct {
@@ -57,7 +58,33 @@ func (sr *storeRepository) Deleted(id string) error {
 func (sr *storeRepository) FindAllPagging(page int, limit int, storeName string, ownerName string) ([]entities.Store, error) {
 
 	var stores []entities.Store
+	// Offset di mulai dari 0 ,
+	offset := (page - 1) * limit // contoh page 2 -1 * 10 = 10
+	query := sr.db.Model(&entities.Store{})
+	log.Println("offset  : ", offset)
+	if storeName != "" {
+		query = query.Where("store_name LIKE ?", "%"+storeName+"%")
+	}
 
+	if ownerName != "" {
+		query = query.Where("owner_name LIKE ?", "%"+ownerName+"%")
+	}
+
+	query = query.Limit(limit).Offset(offset)
+
+	if err := query.Find(&stores).Error; err != nil {
+		return nil, err
+	}
+
+	// // Untuk print hasil struct
+	// utils.PrintStruct(stores)
+
+	return stores, nil
+}
+
+func (sr *storeRepository) CountStoresWithFilter(storeName string, ownerName string) (int64, error) {
+
+	var count int64
 	query := sr.db.Model(&entities.Store{})
 
 	if storeName != "" {
@@ -68,10 +95,8 @@ func (sr *storeRepository) FindAllPagging(page int, limit int, storeName string,
 		query = query.Where("owner_name LIKE ?", "%"+ownerName+"%")
 	}
 
-	if err := query.Find(&stores).Error; err != nil {
-		return nil, err
-	}
+	err := query.Count(&count).Error
 
-	log.Println("Hasil stores : ->> ", stores)
-	return []entities.Store{}, nil
+	return count, err
+
 }

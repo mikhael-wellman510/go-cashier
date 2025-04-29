@@ -24,24 +24,22 @@ type PaginationResponse struct {
 
 func PaginationDto(data any, totalRecords int, page int, limit int) PaginationResponse {
 
-	totalPages := totalRecords / limit
-
+	// 20 total + 10 limit -1 = 29 / 10 = 2 pages
+	// 21 total + 10 limit -1 = 30 / 10 = 3 pages
+	totalPages := (totalRecords + limit - 1) / limit
+	log.Println("Total pages: ", totalPages)
+	log.Println("Hasil total records : ", totalRecords)
+	log.Println("Hasil limit : ", limit)
 	// Todo -> contoh total ada 25 data dan limit 10 , berarti harus ada 3 pages kan
-	if totalPages%limit != 0 {
-		totalPages++
-	}
+	// if totalPages%limit != 0 {
+	// 	totalPages++
+	// }
 
-	var hasNext bool = true
-	var hasPrevious bool = true
+	var hasNext bool = page < totalPages
+	var hasPrevious bool = page > 1
 
-	if page == 1 {
-		hasPrevious = false
-	}
-
-	if page == totalPages {
-		hasNext = false
-	}
-
+	// Buat next page
+	// Buat previous page
 	return PaginationResponse{
 		Data:         data,
 		TotalRecords: totalRecords,

@@ -111,7 +111,13 @@ func (sc *storeController) GetStoreByPaggingAndFilter(ctx *gin.Context) {
 
 	paggination := utils.GetPagination(ctx)
 
-	sc.storeService.FilterAndPagginStore(paggination.Page, paggination.Limit, storeName, ownerName)
+	res, err := sc.storeService.FilterAndPagginStore(paggination.Page, paggination.Limit, storeName, ownerName)
 	// Todo getQuery
 
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, utils.BuildResponseFailed(err.Error()))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, utils.BuildResponseSuccess("Succes ", res))
 }

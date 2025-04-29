@@ -116,7 +116,18 @@ func (ss *storeService) DeletedStore(id string) (bool, error) {
 
 func (ss *storeService) FilterAndPagginStore(page int, limit int, storeName string, ownerName string) (utils.PaginationResponse, error) {
 
-	ss.StoreRepository.FindAllPagging(page, limit, storeName, ownerName)
+	res, err := ss.StoreRepository.FindAllPagging(page, limit, storeName, ownerName)
 
-	return utils.PaginationResponse{}, nil
+	if err != nil {
+		log.Println("Error in useCase : ", err.Error())
+	}
+
+	result, err := ss.StoreRepository.CountStoresWithFilter(storeName, ownerName)
+
+	if err != nil {
+		log.Println("Error count : ", result)
+	}
+	resPagging := utils.PaginationDto(res, int(result), page, limit)
+
+	return resPagging, nil
 }
