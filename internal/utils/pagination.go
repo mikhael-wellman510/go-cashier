@@ -27,13 +27,6 @@ func PaginationDto(data any, totalRecords int, page int, limit int) PaginationRe
 	// 20 total + 10 limit -1 = 29 / 10 = 2 pages
 	// 21 total + 10 limit -1 = 30 / 10 = 3 pages
 	totalPages := (totalRecords + limit - 1) / limit
-	log.Println("Total pages: ", totalPages)
-	log.Println("Hasil total records : ", totalRecords)
-	log.Println("Hasil limit : ", limit)
-	// Todo -> contoh total ada 25 data dan limit 10 , berarti harus ada 3 pages kan
-	// if totalPages%limit != 0 {
-	// 	totalPages++
-	// }
 
 	var hasNext bool = page < totalPages
 	var hasPrevious bool = page > 1
