@@ -34,6 +34,7 @@ func (app *App) ConnectDb() {
 func (app *App) Routes() {
 
 	router := gin.Default()
+	router.Static("/uploads", "./uploads")
 
 	baseUrl := fmt.Sprintf("%s/v%d", constants.ApiPrevix, constants.ApiVersion)
 	log.Println("Base url : ", baseUrl)
@@ -49,6 +50,13 @@ func (app *App) Routes() {
 	storeRoutes.PUT("/update", storeController.UpdateStore)
 	storeRoutes.DELETE("/deleted/:id", storeController.DeletedStore)
 	storeRoutes.GET("/searchAndFilterStore", storeController.GetStoreByPaggingAndFilter)
+
+	categoryRepo := repositories.NewCategoriesRepository(app.Db)
+	categoryUseCase := usecases.NewCategoryService(categoryRepo)
+	categoryController := controllers.NewCategoryController(categoryUseCase)
+
+	categoryRoutes := router.Group(fmt.Sprintf("%s/category", baseUrl))
+	categoryRoutes.POST("/create", categoryController.CreateCategory)
 
 	app.Router = router
 }

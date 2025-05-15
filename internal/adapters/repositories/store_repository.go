@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"log"
 	"mikhael-project-go/internal/entities"
 
 	"gorm.io/gorm"
@@ -61,7 +60,7 @@ func (sr *storeRepository) FindAllPagging(page int, limit int, storeName string,
 	// Offset di mulai dari 0 ,
 	offset := (page - 1) * limit // contoh page 2 -1 * 10 = 10
 	query := sr.db.Model(&entities.Store{})
-	log.Println("offset  : ", offset)
+
 	if storeName != "" {
 		query = query.Where("store_name LIKE ?", "%"+storeName+"%")
 	}
@@ -72,6 +71,7 @@ func (sr *storeRepository) FindAllPagging(page int, limit int, storeName string,
 
 	query = query.Limit(limit).Offset(offset)
 
+	// kalau error keluarkan dari sini
 	if err := query.Find(&stores).Error; err != nil {
 		return nil, err
 	}
