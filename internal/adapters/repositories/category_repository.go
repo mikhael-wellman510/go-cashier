@@ -11,6 +11,7 @@ type (
 	CategoriesRepository interface {
 		Create(categories *entities.Categories) error
 		FindById(id string) (entities.Categories, error)
+		Update(categories *entities.Categories) error
 	}
 
 	categoriesRepository struct {
@@ -38,4 +39,9 @@ func (cr *categoriesRepository) FindById(id string) (entities.Categories, error)
 	err := cr.db.First(&categories, "id=?", id).Error
 
 	return categories, err
+}
+
+func (cr *categoriesRepository) Update(categories *entities.Categories) error {
+
+	return cr.db.Save(categories).Error
 }

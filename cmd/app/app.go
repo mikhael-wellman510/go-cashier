@@ -57,7 +57,7 @@ func (app *App) Routes() {
 
 	categoryRoutes := router.Group(fmt.Sprintf("%s/category", baseUrl))
 	categoryRoutes.POST("/create", categoryController.CreateCategory)
-
+	categoryRoutes.PUT("/updated", categoryController.UpdateCategory)
 	app.Router = router
 }
 

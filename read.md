@@ -18,7 +18,12 @@ go get -u gorm.io/driver/mysql
 5. install UUID
 go get github.com/google/uuid
 
+6. install untuk decimal
+go get github.com/shopspring/decimal
 
 task :
-lanjutin controller 
+
+1. buat CRUD product -> buat Many to one product -> store , product -> categories
+
+
 
