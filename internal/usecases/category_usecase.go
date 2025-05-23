@@ -13,6 +13,7 @@ type (
 	CategoryService interface {
 		CreateCategory(categoryReq entities.CategoryRequest) (entities.CategoryResponse, error)
 		UpdateCategory(categoryreq entities.CategoryRequest) (entities.CategoryResponse, error)
+		FindById(id string) (entities.Categories, error)
 	}
 
 	categoryService struct {
@@ -80,4 +81,15 @@ func (cs *categoryService) UpdateCategory(categoryreq entities.CategoryRequest) 
 		CreatedAt:    res.CreatedAt,
 		UpdatedAt:    res.UpdatedAt,
 	}, nil
+
+}
+
+func (cs *categoryService) FindById(id string) (entities.Categories, error) {
+	res, err := cs.CategoryRepository.FindById(id)
+
+	if err != nil {
+		return entities.Categories{}, err
+	}
+
+	return res, nil
 }

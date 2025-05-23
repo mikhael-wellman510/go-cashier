@@ -43,7 +43,7 @@ func (app *App) Routes() {
 	storeUseCase := usecases.NewStoreService(storeRepo)
 	storeController := controllers.NewStoreController(storeUseCase)
 
-	storeRoutes := router.Group(fmt.Sprintf("%s/product", baseUrl))
+	storeRoutes := router.Group(fmt.Sprintf("%s/store", baseUrl))
 	storeRoutes.POST("/create", storeController.CreateStore)
 	storeRoutes.GET("/find/:id", storeController.FindStoreById)
 	storeRoutes.GET("/find", storeController.FindStoreById)
@@ -58,6 +58,15 @@ func (app *App) Routes() {
 	categoryRoutes := router.Group(fmt.Sprintf("%s/category", baseUrl))
 	categoryRoutes.POST("/create", categoryController.CreateCategory)
 	categoryRoutes.PUT("/updated", categoryController.UpdateCategory)
+
+	productRepo := repositories.NewProductRepository(app.Db)
+	productUseCase := usecases.NewProductService(productRepo, storeUseCase, categoryUseCase)
+	productController := controllers.NewProductController(productUseCase)
+
+	productRoutes := router.Group(fmt.Sprintf("%s/product", baseUrl))
+	productRoutes.POST("/create", productController.Create)
+	productRoutes.PUT("/updated", productController.Update)
+
 	app.Router = router
 }
 

@@ -14,6 +14,7 @@ type (
 		UpdatedStore(storeReq entities.StoreRequest) (entities.StoreResponse, error)
 		DeletedStore(id string) (bool, error)
 		FilterAndPagginStore(page int, limit int, storeName string, ownerName string) (utils.PaginationResponse, error)
+		FindById(id string) (entities.Store, error)
 	}
 
 	storeService struct {
@@ -24,6 +25,7 @@ type (
 // Constructor
 func NewStoreService(storeRepository repositories.StoreRepository) StoreService {
 	return &storeService{
+		// Mengisi struct repository dari repo
 		StoreRepository: storeRepository,
 	}
 }
@@ -134,4 +136,15 @@ func (ss *storeService) FilterAndPagginStore(page int, limit int, storeName stri
 	resPagging := utils.PaginationDto(res, int(result), page, limit)
 
 	return resPagging, nil
+}
+
+func (ss *storeService) FindById(id string) (entities.Store, error) {
+
+	res, err := ss.StoreRepository.FindById(id)
+
+	if err != nil {
+		return entities.Store{}, err
+	}
+
+	return res, nil
 }
