@@ -50,7 +50,7 @@ func GetPagination(ctx *gin.Context) Pagination {
 	page, err := strconv.Atoi(ctx.DefaultQuery("page", "1"))
 
 	if err != nil || page == 0 {
-		log.Println("error page : ", err)
+
 		page = 1
 	}
 
@@ -61,8 +61,6 @@ func GetPagination(ctx *gin.Context) Pagination {
 		log.Println("err limit : ", err)
 		limit = 10
 	}
-	log.Println("Hasil page : ", page)
-	log.Println("Hasil liit : ", limit)
 
 	return Pagination{
 		Page:  page,

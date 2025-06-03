@@ -5,7 +5,7 @@ import "github.com/shopspring/decimal"
 type (
 	Product struct {
 		Base
-		Stock        int             `json:"stock" gorm:"column:category;not null"`
+		Stock        int             `json:"stock" gorm:"column:stock;not null"`
 		Barcode      string          `json:"barcode" gorm:"column:barcode;not null"`
 		ProductName  string          `json:"product_name" gorm:"column:product_name;not null"`
 		Description  string          `json:"description" gorm:"column:description;not null"`

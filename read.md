@@ -23,7 +23,8 @@ go get github.com/shopspring/decimal
 
 task :
 
-1. buat CRUD product -> buat Many to one product -> store , product -> categories
+1. kirim email
+2. buat authentication
 
 
 

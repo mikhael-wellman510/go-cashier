@@ -10,6 +10,7 @@ import (
 	"mikhael-project-go/migrations"
 	"mikhael-project-go/pkg/constants"
 	"mikhael-project-go/pkg/drivers/sql"
+	"mikhael-project-go/seeders"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -66,6 +67,12 @@ func (app *App) Routes() {
 	productRoutes := router.Group(fmt.Sprintf("%s/product", baseUrl))
 	productRoutes.POST("/create", productController.Create)
 	productRoutes.PUT("/updated", productController.Update)
+	productRoutes.GET("/find/:id", productController.FindById)
+	productRoutes.GET("/search", productController.PaggingProduct)
+	productRoutes.GET("/exportCsv", productController.ExportProductToCsv)
+	// Seeders
+	seed := seeders.NewSeeders(app.Db)
+	router.GET("/seeds", seed.GenerateSeeders)
 
 	app.Router = router
 }
