@@ -224,7 +224,7 @@ func (ps *productService) ExportProductToCsv(date string) ([]entities.ProductRes
 		if err != nil {
 			return []entities.ProductResponse{}, err
 		}
-
+		log.Println("Hasil dari store : ", store)
 		response = append(response, entities.ProductResponse{
 			Id:          product.ID,
 			Stock:       product.Stock,

@@ -6,6 +6,7 @@ import (
 	"mikhael-project-go/config"
 	"mikhael-project-go/internal/adapters/controllers"
 	"mikhael-project-go/internal/adapters/repositories"
+	"mikhael-project-go/internal/service"
 	"mikhael-project-go/internal/usecases"
 	"mikhael-project-go/migrations"
 	"mikhael-project-go/pkg/constants"
@@ -38,7 +39,6 @@ func (app *App) Routes() {
 	router.Static("/uploads", "./uploads")
 
 	baseUrl := fmt.Sprintf("%s/v%d", constants.ApiPrevix, constants.ApiVersion)
-	log.Println("Base url : ", baseUrl)
 
 	storeRepo := repositories.NewStoreRepository(app.Db)
 	storeUseCase := usecases.NewStoreService(storeRepo)
@@ -70,11 +70,19 @@ func (app *App) Routes() {
 	productRoutes.GET("/find/:id", productController.FindById)
 	productRoutes.GET("/search", productController.PaggingProduct)
 	productRoutes.GET("/exportCsv", productController.ExportProductToCsv)
+
+	// Scheduler service
+	schedulerUseCase := usecases.NewSchedulerService(productUseCase)
+
 	// Seeders
 	seed := seeders.NewSeeders(app.Db)
 	router.GET("/seeds", seed.GenerateSeeders)
 
+	// Run Cron
+	cronJob := service.NewCronJob(schedulerUseCase)
+	cronJob.StartSchedulerSendEmail()
 	app.Router = router
+
 }
 
 // Running port nya
