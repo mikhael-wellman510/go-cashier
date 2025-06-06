@@ -19,7 +19,7 @@ func SendEmail(to string, subject string, body string) {
 
 	env := common.NewEmailInfo(
 		config.Config("SMTP"),
-		config.Config("PORT"),
+		config.Config("PORT_SMTP"),
 		config.Config("EMAIL_SMTP"),
 		config.Config("PASSWORD_SMTP"),
 	)

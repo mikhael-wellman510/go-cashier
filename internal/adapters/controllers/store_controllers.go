@@ -42,7 +42,7 @@ func (sc *storeController) CreateStore(ctx *gin.Context) {
 
 	log.Println("Controller : ", post)
 
-	res, err := sc.storeService.CreateStore(post)
+	res, err := sc.storeService.CreateStore(&post)
 
 	log.Println("Hasil controller res : ", res)
 
@@ -80,7 +80,7 @@ func (sc *storeController) UpdateStore(ctx *gin.Context) {
 		return
 	}
 
-	res, err := sc.storeService.UpdatedStore(updates)
+	res, err := sc.storeService.UpdatedStore(&updates)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, utils.BuildResponseFailed(err.Error()))

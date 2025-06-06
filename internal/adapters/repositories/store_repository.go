@@ -9,7 +9,7 @@ import (
 type (
 	StoreRepository interface {
 		Create(store *entities.Store) error
-		FindById(id string) (entities.Store, error)
+		FindById(id string) (*entities.Store, error)
 		Update(store *entities.Store) error
 		Deleted(id string) error
 		FindAllPagging(page int, limit int, storeName string, ownerName string) ([]entities.Store, error)
@@ -30,15 +30,15 @@ func NewStoreRepository(db *gorm.DB) StoreRepository {
 
 func (sr *storeRepository) Create(store *entities.Store) error {
 
-	return sr.db.Create(&store).Error
+	return sr.db.Create(store).Error
 }
 
-func (sr *storeRepository) FindById(id string) (entities.Store, error) {
+func (sr *storeRepository) FindById(id string) (*entities.Store, error) {
 	var store entities.Store
 
 	err := sr.db.First(&store, "id=?", id).Error
 
-	return store, err
+	return &store, err
 }
 
 func (sr *storeRepository) Update(store *entities.Store) error {

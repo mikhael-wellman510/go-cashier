@@ -11,7 +11,7 @@ type (
 	ProductRepository interface {
 		Create(product *entities.Product) error
 		Update(product *entities.Product) error
-		FindById(id string) (entities.Product, error)
+		FindById(id string) (*entities.Product, error)
 		FindAllPagging(page int, limit int, search string) ([]entities.Product, error)
 		CountWithFilterProduct(search string) (int64, error)
 		FindProductByDate(date string) ([]entities.Product, error)
@@ -38,12 +38,12 @@ func (pr *productRepository) Update(product *entities.Product) error {
 	return pr.db.Updates(product).Error
 }
 
-func (pr *productRepository) FindById(id string) (entities.Product, error) {
+func (pr *productRepository) FindById(id string) (*entities.Product, error) {
 	var product entities.Product
 
 	err := pr.db.Preload("Categories").Preload("Store").First(&product, "id=?", id).Error
 
-	return product, err
+	return &product, err
 
 }
 

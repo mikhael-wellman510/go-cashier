@@ -9,9 +9,9 @@ import (
 
 type (
 	ProductService interface {
-		CreateProduct(productReq entities.ProductRequest) (entities.ProductResponse, error)
-		UpdateProduct(productReq entities.ProductRequest) (entities.ProductResponse, error)
-		FindProductById(id string) (entities.ProductResponse, error)
+		CreateProduct(productReq *entities.ProductRequest) (*entities.ProductResponse, error)
+		UpdateProduct(productReq *entities.ProductRequest) (*entities.ProductResponse, error)
+		FindProductById(id string) (*entities.ProductResponse, error)
 		FilterAndPaggingProduct(page int, limit int, search string) (utils.PaginationResponse, error)
 		ExportProductToCsv(date string) ([]entities.ProductResponse, error)
 	}
@@ -33,22 +33,22 @@ func NewProductService(productRepository repositories.ProductRepository, storeSe
 	}
 }
 
-func (ps *productService) CreateProduct(productReq entities.ProductRequest) (entities.ProductResponse, error) {
+func (ps *productService) CreateProduct(productReq *entities.ProductRequest) (*entities.ProductResponse, error) {
 
 	// find -> store id
 	storeRes, err := ps.StoreService.FindById(productReq.StoreId)
 
 	if err != nil {
-		return entities.ProductResponse{}, err
+		return nil, err
 	}
 
 	categoryRes, err := ps.CategoryService.FindById(productReq.CategoriesId)
 
 	if err != nil {
-		return entities.ProductResponse{}, err
+		return nil, err
 	}
 
-	product := entities.Product{
+	product := &entities.Product{
 		Stock:        productReq.Stock,
 		Barcode:      productReq.Barcode,
 		ProductName:  productReq.ProductName,
@@ -58,16 +58,13 @@ func (ps *productService) CreateProduct(productReq entities.ProductRequest) (ent
 		StoreId:      storeRes.ID,
 	}
 
-	if err := ps.ProductRepository.Create(&product); err != nil {
-		return entities.ProductResponse{}, err
+	if err := ps.ProductRepository.Create(product); err != nil {
+		return nil, err
 	}
-	log.Println("Hasil product : ", product)
-	log.Println("Hasil storeRes ", storeRes)
-	log.Println("hasil category res : ", categoryRes)
 	// find -> categoryid
 	// Save product with store id an category id
 
-	return entities.ProductResponse{
+	return &entities.ProductResponse{
 		Id:          product.ID,
 		Stock:       product.Stock,
 		Barcode:     product.Barcode,
@@ -93,18 +90,18 @@ func (ps *productService) CreateProduct(productReq entities.ProductRequest) (ent
 	}, nil
 }
 
-func (ps *productService) UpdateProduct(productReq entities.ProductRequest) (entities.ProductResponse, error) {
+func (ps *productService) UpdateProduct(productReq *entities.ProductRequest) (*entities.ProductResponse, error) {
 
 	// todo -> todo -> find by id product
 
 	res, err := ps.ProductRepository.FindById(productReq.Id)
 
 	if err != nil {
-		return entities.ProductResponse{}, err
+		return nil, err
 	}
 
 	// Updated
-	data := entities.Product{
+	data := &entities.Product{
 		Base: entities.Base{
 			ID: res.ID,
 			// CreatedAt: res.CreatedAt,
@@ -118,14 +115,14 @@ func (ps *productService) UpdateProduct(productReq entities.ProductRequest) (ent
 		StoreId:      productReq.StoreId,
 	}
 
-	if err := ps.ProductRepository.Update(&data); err != nil {
+	if err := ps.ProductRepository.Update(data); err != nil {
 		log.Println("Error ini ", err.Error())
-		return entities.ProductResponse{}, err
+		return nil, err
 	}
 
 	product, _ := ps.ProductRepository.FindById(productReq.Id)
 
-	return entities.ProductResponse{
+	return &entities.ProductResponse{
 		Id:          data.ID,
 		Stock:       data.Stock,
 		Barcode:     data.Barcode,
@@ -151,17 +148,17 @@ func (ps *productService) UpdateProduct(productReq entities.ProductRequest) (ent
 	}, nil
 
 }
-func (ps *productService) FindProductById(id string) (entities.ProductResponse, error) {
+func (ps *productService) FindProductById(id string) (*entities.ProductResponse, error) {
 
 	res, err := ps.ProductRepository.FindById(id)
 
 	if err != nil {
-		return entities.ProductResponse{}, err
+		return nil, err
 	}
 
 	log.Println("Hasil : ", res)
 
-	return entities.ProductResponse{
+	return &entities.ProductResponse{
 		Id:          res.ID,
 		Stock:       res.Stock,
 		Barcode:     res.Barcode,

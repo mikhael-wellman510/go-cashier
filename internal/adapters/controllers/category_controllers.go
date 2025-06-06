@@ -51,7 +51,7 @@ func (cc *categoryController) CreateCategory(ctx *gin.Context) {
 	}
 
 	categoryReq.ImageUrl = val
-	res, err := cc.categoryService.CreateCategory(categoryReq)
+	res, err := cc.categoryService.CreateCategory(&categoryReq)
 
 	if err != nil {
 		log.Println("hasil : ", strings.TrimPrefix(categoryReq.ImageUrl, constants.Server))
@@ -79,7 +79,7 @@ func (cc *categoryController) UpdateCategory(ctx *gin.Context) {
 		return
 	}
 
-	res, err := cc.categoryService.UpdateCategory(categoryReq)
+	res, err := cc.categoryService.UpdateCategory(&categoryReq)
 
 	if err != nil {
 		// Handle untuk hapus foto jika gagal dalam transaksi

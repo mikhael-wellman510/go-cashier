@@ -9,12 +9,12 @@ import (
 
 type (
 	StoreService interface {
-		CreateStore(storeReq entities.StoreRequest) (entities.StoreResponse, error)
-		FindStoreById(id string) (entities.StoreResponse, error)
-		UpdatedStore(storeReq entities.StoreRequest) (entities.StoreResponse, error)
+		CreateStore(storeReq *entities.StoreRequest) (*entities.StoreResponse, error)
+		FindStoreById(id string) (*entities.StoreResponse, error)
+		UpdatedStore(storeReq *entities.StoreRequest) (*entities.StoreResponse, error)
 		DeletedStore(id string) (bool, error)
 		FilterAndPagginStore(page int, limit int, storeName string, ownerName string) (utils.PaginationResponse, error)
-		FindById(id string) (entities.Store, error)
+		FindById(id string) (*entities.Store, error)
 	}
 
 	storeService struct {
@@ -30,8 +30,8 @@ func NewStoreService(storeRepository repositories.StoreRepository) StoreService 
 	}
 }
 
-func (ss *storeService) CreateStore(storeReq entities.StoreRequest) (entities.StoreResponse, error) {
-	store := entities.Store{
+func (ss *storeService) CreateStore(storeReq *entities.StoreRequest) (*entities.StoreResponse, error) {
+	store := &entities.Store{
 		StoreName: storeReq.StoreName,
 		Address:   storeReq.Address,
 		OwnerName: storeReq.OwnerName,
@@ -39,13 +39,13 @@ func (ss *storeService) CreateStore(storeReq entities.StoreRequest) (entities.St
 
 	// res, err := ss.StoreRepository.Create(&store)
 	log.Println("store awal : ", store)
-	if err := ss.StoreRepository.Create(&store); err != nil {
+	if err := ss.StoreRepository.Create(store); err != nil {
 		log.Println("Error nya : ", err)
-		return entities.StoreResponse{}, err
+		return nil, err
 	}
 
 	log.Println("Log store setelah create : ", store)
-	return entities.StoreResponse{
+	return &entities.StoreResponse{
 		Id:        store.ID,
 		StoreName: store.StoreName,
 		Address:   store.Address,
@@ -55,14 +55,14 @@ func (ss *storeService) CreateStore(storeReq entities.StoreRequest) (entities.St
 	}, nil
 }
 
-func (ss *storeService) FindStoreById(id string) (entities.StoreResponse, error) {
+func (ss *storeService) FindStoreById(id string) (*entities.StoreResponse, error) {
 	res, err := ss.StoreRepository.FindById(id)
 
 	if err != nil {
-		return entities.StoreResponse{}, err
+		return nil, err
 	}
 
-	return entities.StoreResponse{
+	return &entities.StoreResponse{
 		Id:        res.ID,
 		StoreName: res.StoreName,
 		Address:   res.Address,
@@ -72,7 +72,7 @@ func (ss *storeService) FindStoreById(id string) (entities.StoreResponse, error)
 	}, err
 }
 
-func (ss *storeService) UpdatedStore(storeReq entities.StoreRequest) (entities.StoreResponse, error) {
+func (ss *storeService) UpdatedStore(storeReq *entities.StoreRequest) (*entities.StoreResponse, error) {
 
 	// Todo find by id dulu
 
@@ -81,7 +81,7 @@ func (ss *storeService) UpdatedStore(storeReq entities.StoreRequest) (entities.S
 	log.Println("Hasil res: ", res)
 	if err != nil {
 		log.Println("Hasil err : ", err)
-		return entities.StoreResponse{}, err
+		return nil, err
 
 	}
 
@@ -89,13 +89,13 @@ func (ss *storeService) UpdatedStore(storeReq entities.StoreRequest) (entities.S
 	res.Address = storeReq.Address
 	res.OwnerName = storeReq.OwnerName
 
-	if err := ss.StoreRepository.Update(&res); err != nil {
+	if err := ss.StoreRepository.Update(res); err != nil {
 
-		return entities.StoreResponse{}, err
+		return nil, err
 	}
 
 	log.Println("Hasil updated : ", res)
-	return entities.StoreResponse{
+	return &entities.StoreResponse{
 		Id:        res.ID,
 		StoreName: res.StoreName,
 		Address:   res.Address,
@@ -123,6 +123,7 @@ func (ss *storeService) FilterAndPagginStore(page int, limit int, storeName stri
 
 	if err != nil {
 		log.Println("Error in useCase : ", err.Error())
+		return utils.PaginationResponse{}, err
 	}
 
 	// Hasil count data
@@ -130,6 +131,7 @@ func (ss *storeService) FilterAndPagginStore(page int, limit int, storeName stri
 
 	if err != nil {
 		log.Println("Error count : ", result)
+		return utils.PaginationResponse{}, err
 	}
 
 	// Masukan data ke utils pagging
@@ -138,12 +140,12 @@ func (ss *storeService) FilterAndPagginStore(page int, limit int, storeName stri
 	return resPagging, nil
 }
 
-func (ss *storeService) FindById(id string) (entities.Store, error) {
+func (ss *storeService) FindById(id string) (*entities.Store, error) {
 
 	res, err := ss.StoreRepository.FindById(id)
 
 	if err != nil {
-		return entities.Store{}, err
+		return nil, err
 	}
 
 	return res, nil

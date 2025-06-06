@@ -11,9 +11,9 @@ import (
 
 type (
 	CategoryService interface {
-		CreateCategory(categoryReq entities.CategoryRequest) (entities.CategoryResponse, error)
-		UpdateCategory(categoryreq entities.CategoryRequest) (entities.CategoryResponse, error)
-		FindById(id string) (entities.Categories, error)
+		CreateCategory(categoryReq *entities.CategoryRequest) (*entities.CategoryResponse, error)
+		UpdateCategory(categoryreq *entities.CategoryRequest) (*entities.CategoryResponse, error)
+		FindById(id string) (*entities.Categories, error)
 	}
 
 	categoryService struct {
@@ -27,20 +27,20 @@ func NewCategoryService(categoryRepository repositories.CategoriesRepository) Ca
 	}
 }
 
-func (cs *categoryService) CreateCategory(categoryReq entities.CategoryRequest) (entities.CategoryResponse, error) {
+func (cs *categoryService) CreateCategory(categoryReq *entities.CategoryRequest) (*entities.CategoryResponse, error) {
 
-	category := entities.Categories{
+	category := &entities.Categories{
 		CategoryName: categoryReq.CategoryName,
 		Description:  categoryReq.Description,
 		ImageUrl:     categoryReq.ImageUrl,
 	}
 
-	if err := cs.CategoryRepository.Create(&category); err != nil {
-		return entities.CategoryResponse{}, err
+	if err := cs.CategoryRepository.Create(category); err != nil {
+		return nil, err
 	}
 
 	log.Println("User case : ", category)
-	return entities.CategoryResponse{
+	return &entities.CategoryResponse{
 		Id:           category.ID,
 		CategoryName: category.CategoryName,
 		Description:  category.Description,
@@ -50,14 +50,14 @@ func (cs *categoryService) CreateCategory(categoryReq entities.CategoryRequest) 
 	}, nil
 }
 
-func (cs *categoryService) UpdateCategory(categoryreq entities.CategoryRequest) (entities.CategoryResponse, error) {
+func (cs *categoryService) UpdateCategory(categoryreq *entities.CategoryRequest) (*entities.CategoryResponse, error) {
 
 	// todo find by id
 	res, err := cs.CategoryRepository.FindById(categoryreq.Id)
 	_ = os.Remove(strings.TrimPrefix(res.ImageUrl, constants.Server))
 	if err != nil {
 
-		return entities.CategoryResponse{}, err
+		return nil, err
 	}
 
 	// todo -> generate foto dulu  biar ke save
@@ -67,13 +67,13 @@ func (cs *categoryService) UpdateCategory(categoryreq entities.CategoryRequest) 
 	res.ImageUrl = categoryreq.ImageUrl
 
 	// updated
-	if err := cs.CategoryRepository.Update(&res); err != nil {
-		return entities.CategoryResponse{}, err
+	if err := cs.CategoryRepository.Update(res); err != nil {
+		return nil, err
 	}
 
 	// Hapus data yg lama karena mau di updated
 
-	return entities.CategoryResponse{
+	return &entities.CategoryResponse{
 		Id:           res.ID,
 		CategoryName: res.CategoryName,
 		Description:  res.Description,
@@ -84,11 +84,11 @@ func (cs *categoryService) UpdateCategory(categoryreq entities.CategoryRequest) 
 
 }
 
-func (cs *categoryService) FindById(id string) (entities.Categories, error) {
+func (cs *categoryService) FindById(id string) (*entities.Categories, error) {
 	res, err := cs.CategoryRepository.FindById(id)
 
 	if err != nil {
-		return entities.Categories{}, err
+		return nil, err
 	}
 
 	return res, nil

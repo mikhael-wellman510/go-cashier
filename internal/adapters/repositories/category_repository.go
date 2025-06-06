@@ -10,7 +10,7 @@ import (
 type (
 	CategoriesRepository interface {
 		Create(categories *entities.Categories) error
-		FindById(id string) (entities.Categories, error)
+		FindById(id string) (*entities.Categories, error)
 		Update(categories *entities.Categories) error
 	}
 
@@ -29,16 +29,16 @@ func NewCategoriesRepository(db *gorm.DB) CategoriesRepository {
 func (cr *categoriesRepository) Create(categories *entities.Categories) error {
 
 	log.Println("arti cr : ", cr.db)
-	return cr.db.Create(&categories).Error
+	return cr.db.Create(categories).Error
 }
 
-func (cr *categoriesRepository) FindById(id string) (entities.Categories, error) {
+func (cr *categoriesRepository) FindById(id string) (*entities.Categories, error) {
 
 	var categories entities.Categories
 
 	err := cr.db.First(&categories, "id=?", id).Error
 
-	return categories, err
+	return &categories, err
 }
 
 func (cr *categoriesRepository) Update(categories *entities.Categories) error {

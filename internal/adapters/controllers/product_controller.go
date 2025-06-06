@@ -43,7 +43,7 @@ func (pc *productController) Create(ctx *gin.Context) {
 		return
 	}
 	log.Println("Cek : ", productReq)
-	res, err := pc.productService.CreateProduct(productReq)
+	res, err := pc.productService.CreateProduct(&productReq)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, utils.BuildResponseFailed(err.Error()))
@@ -64,7 +64,7 @@ func (pc *productController) Update(ctx *gin.Context) {
 
 	log.Println("Error product controler  : ", productReq)
 
-	res, err := pc.productService.UpdateProduct(productReq)
+	res, err := pc.productService.UpdateProduct(&productReq)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, utils.BuildResponseFailed(err.Error()))
