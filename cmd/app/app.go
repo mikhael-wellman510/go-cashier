@@ -40,6 +40,14 @@ func (app *App) Routes() {
 
 	baseUrl := fmt.Sprintf("%s/v%d", constants.ApiPrevix, constants.ApiVersion)
 
+	authRepo := repositories.NewUserRepository(app.Db)
+	authUseCase := usecases.NewAuthService(authRepo)
+	authController := controllers.NewAuthController(authUseCase)
+
+	authRoutes := router.Group(fmt.Sprintf("%s/auth", baseUrl))
+	authRoutes.POST("/register", authController.RegisterUserController)
+	authRoutes.POST("/login", authController.LoginController)
+
 	storeRepo := repositories.NewStoreRepository(app.Db)
 	storeUseCase := usecases.NewStoreService(storeRepo)
 	storeController := controllers.NewStoreController(storeUseCase)

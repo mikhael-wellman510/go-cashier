@@ -23,8 +23,10 @@ go get github.com/shopspring/decimal
 
 task :
 
-1. kirim email
-2. buat authentication
+1. generate token ,
+2. buat controller  nya 
+3. kalau sudah bisa , buat role , trus login with google
+4. kirim ke email untuk validasi akun 
 
 
 

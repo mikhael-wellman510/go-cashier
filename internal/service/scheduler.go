@@ -26,6 +26,7 @@ func NewCronJob(schedulerService usecases.SchedulerService) CronJob {
 	}
 }
 
+// Todo -> untuk panggil
 func (s *cronJob) StartSchedulerSendEmail() {
 	c := cron.New(cron.WithLocation(time.FixedZone("Asia/Jakarta", 7*3600)))
 	// menit / jam / hari
