@@ -21,10 +21,17 @@ go get github.com/google/uuid
 6. install untuk decimal
 go get github.com/shopspring/decimal
 
+7. install JWT
+go get -u github.com/golang-jwt/jwt/v5
+
 task :
 
-1. generate token ,
-2. buat controller  nya 
+
+// Todo -> 
+1. Buat Table Transaction dan Transaction Detail
+2. Buat Table Payment
+
+// next feature
 3. kalau sudah bisa , buat role , trus login with google
 4. kirim ke email untuk validasi akun 
 

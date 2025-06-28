@@ -5,13 +5,13 @@ import (
 	"log"
 	"mikhael-project-go/config"
 	"mikhael-project-go/internal/adapters/controllers"
+	"mikhael-project-go/internal/adapters/middleware"
 	"mikhael-project-go/internal/adapters/repositories"
 	"mikhael-project-go/internal/service"
 	"mikhael-project-go/internal/usecases"
 	"mikhael-project-go/migrations"
 	"mikhael-project-go/pkg/constants"
 	"mikhael-project-go/pkg/drivers/sql"
-	"mikhael-project-go/seeders"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -53,6 +53,7 @@ func (app *App) Routes() {
 	storeController := controllers.NewStoreController(storeUseCase)
 
 	storeRoutes := router.Group(fmt.Sprintf("%s/store", baseUrl))
+	storeRoutes.Use(middleware.AuthMiddleware())
 	storeRoutes.POST("/create", storeController.CreateStore)
 	storeRoutes.GET("/find/:id", storeController.FindStoreById)
 	storeRoutes.GET("/find", storeController.FindStoreById)
@@ -65,6 +66,7 @@ func (app *App) Routes() {
 	categoryController := controllers.NewCategoryController(categoryUseCase)
 
 	categoryRoutes := router.Group(fmt.Sprintf("%s/category", baseUrl))
+	categoryRoutes.Use(middleware.AuthMiddleware())
 	categoryRoutes.POST("/create", categoryController.CreateCategory)
 	categoryRoutes.PUT("/updated", categoryController.UpdateCategory)
 
@@ -73,6 +75,7 @@ func (app *App) Routes() {
 	productController := controllers.NewProductController(productUseCase)
 
 	productRoutes := router.Group(fmt.Sprintf("%s/product", baseUrl))
+	productRoutes.Use(middleware.AuthMiddleware())
 	productRoutes.POST("/create", productController.Create)
 	productRoutes.PUT("/updated", productController.Update)
 	productRoutes.GET("/find/:id", productController.FindById)
@@ -81,10 +84,6 @@ func (app *App) Routes() {
 
 	// Scheduler service
 	schedulerUseCase := usecases.NewSchedulerService(productUseCase)
-
-	// Seeders
-	seed := seeders.NewSeeders(app.Db)
-	router.GET("/seeds", seed.GenerateSeeders)
 
 	// Run Cron
 	cronJob := service.NewCronJob(schedulerUseCase)

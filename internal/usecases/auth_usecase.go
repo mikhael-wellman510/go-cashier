@@ -44,7 +44,12 @@ func (as *authService) Login(loginReq *entities.LoginRequest) (*entities.LoginRe
 
 	// Generate token
 
-	return nil, nil
+	token, _ := utils.GenerateToken(user)
+
+	return &entities.LoginResponse{
+		Token:   token,
+		Message: "Success Login",
+	}, nil
 }
 func (as *authService) RegisterUser(userReq *entities.UserRequest) (*entities.UserResponse, error) {
 
