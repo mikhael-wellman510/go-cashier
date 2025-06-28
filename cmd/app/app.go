@@ -82,6 +82,14 @@ func (app *App) Routes() {
 	productRoutes.GET("/search", productController.PaggingProduct)
 	productRoutes.GET("/exportCsv", productController.ExportProductToCsv)
 
+	paymentMethodRepo := repositories.NewPaymentMethodRepository(app.Db)
+	paymentMethodUseCase := usecases.NewPaymenMethodService(paymentMethodRepo)
+	paymentMethodController := controllers.NewPaymentMethodController(paymentMethodUseCase)
+
+	paymentMethodRoutes := router.Group(fmt.Sprintf("%s/paymentMethod", baseUrl))
+	paymentMethodRoutes.Use(middleware.AuthMiddleware())
+	paymentMethodRoutes.POST("/create", paymentMethodController.CreatePaymentMethodController)
+	paymentMethodRoutes.GET("/findAll", paymentMethodController.FindAllPaymentMethodController)
 	// Scheduler service
 	schedulerUseCase := usecases.NewSchedulerService(productUseCase)
 
