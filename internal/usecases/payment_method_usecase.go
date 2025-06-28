@@ -34,8 +34,8 @@ func (pmr *paymentMethodService) CreatePaymentMethod(paymentMethod *entities.Pay
 	}
 
 	return &entities.PaymentMethodResponse{
-		Id:            paymentMethod.Id,
-		PaymentMethod: paymentMethod.PaymentMethod,
+		Id:            paymentMethodData.ID,
+		PaymentMethod: paymentMethodData.PaymentMethod,
 		CreatedAt:     paymentMethodData.CreatedAt,
 		UpdatedAt:     paymentMethodData.UpdatedAt,
 	}, nil

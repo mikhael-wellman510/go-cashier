@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"log"
 	"mikhael-project-go/internal/utils"
 	"net/http"
 	"os"
@@ -17,8 +16,6 @@ func AuthMiddleware() gin.HandlerFunc {
 		// Ini Lewat Headers
 		token := c.GetHeader("token")
 
-		log.Println("token : ", token)
-
 		if token == "" || !strings.HasPrefix(token, "Bearer ") {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 			c.Abort()
@@ -26,13 +23,12 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		token = strings.TrimPrefix(token, "Bearer ")
-		log.Println("Token new : ", token)
+
 		// todo -> cek JWT
 		res, err := jwt.ParseWithClaims(token, &utils.Claims{}, func(t *jwt.Token) (any, error) {
 			return []byte(os.Getenv("JWT_SECRET")), nil
 		})
 
-		log.Println("Midleware : ", res)
 		if err != nil || !res.Valid {
 			c.JSON(http.StatusUnauthorized, gin.H{"Unauthorized": err.Error()})
 			c.Abort()
