@@ -90,6 +90,7 @@ func (app *App) Routes() {
 	paymentMethodRoutes.Use(middleware.AuthMiddleware())
 	paymentMethodRoutes.POST("/create", paymentMethodController.CreatePaymentMethodController)
 	paymentMethodRoutes.GET("/findAll", paymentMethodController.FindAllPaymentMethodController)
+	paymentMethodRoutes.DELETE("/deleted/:id", paymentMethodController.DeletedPaymentMethodController)
 	// Scheduler service
 	schedulerUseCase := usecases.NewSchedulerService(productUseCase)
 

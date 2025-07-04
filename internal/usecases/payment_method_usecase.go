@@ -9,6 +9,7 @@ type (
 	PaymentMethodService interface {
 		CreatePaymentMethod(paymentMethod *entities.PaymentMethodRequest) (*entities.PaymentMethodResponse, error)
 		FindAllPaymentMethod() ([]entities.PaymentMethodResponse, error)
+		DeletedPaymentMethod(id string) (bool, error)
 	}
 
 	paymentMethodService struct {
@@ -62,4 +63,14 @@ func (pmr *paymentMethodService) FindAllPaymentMethod() ([]entities.PaymentMetho
 	}
 
 	return paymentMethodResponse, nil
+}
+
+func (pmr *paymentMethodService) DeletedPaymentMethod(id string) (bool, error) {
+	_, err := pmr.PaymentMethodRepository.FindById(id)
+
+	if err != nil {
+		return false, err
+	}
+
+	return true, err
 }

@@ -11,6 +11,7 @@ type (
 		Create(paymentMethod *entities.PaymentMethod) error
 		FindById(id string) (*entities.PaymentMethod, error)
 		FindAll() ([]entities.PaymentMethod, error)
+		Deleted(id string) error
 	}
 
 	paymentMethodRepository struct {
@@ -44,4 +45,11 @@ func (pmr *paymentMethodRepository) FindAll() ([]entities.PaymentMethod, error) 
 	err := pmr.db.Find(&paymentMethod).Error
 
 	return paymentMethod, err
+}
+
+func (pmr *paymentMethodRepository) Deleted(id string) error {
+
+	paymentMetohd := entities.PaymentMethod{}
+
+	return pmr.db.Delete(&paymentMetohd, "id=?", id).Error
 }

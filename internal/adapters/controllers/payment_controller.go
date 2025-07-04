@@ -13,6 +13,7 @@ type (
 	PaymentMethodControler interface {
 		CreatePaymentMethodController(ctx *gin.Context)
 		FindAllPaymentMethodController(ctx *gin.Context)
+		DeletedPaymentMethodController(ctx *gin.Context)
 	}
 
 	paymentMethodController struct {
@@ -56,4 +57,17 @@ func (pmc *paymentMethodController) FindAllPaymentMethodController(ctx *gin.Cont
 	}
 
 	ctx.JSON(http.StatusOK, res)
+}
+
+func (pmc *paymentMethodController) DeletedPaymentMethodController(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	res, err := pmc.paymentMethodService.DeletedPaymentMethod(id)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, utils.BuildResponseFailed(err.Error()))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, utils.BuildResponseSuccess("Success Deleted id : "+id, res))
 }
